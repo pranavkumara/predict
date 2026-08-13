@@ -2,6 +2,8 @@
 
 AI-powered machine failure prediction system using **XGBoost**. Predicts whether industrial machines are likely to fail based on sensor readings (temperature, rotational speed, torque, tool wear) and provides risk-level classifications with maintenance recommendations.
 
+🔗 **Live demo:** _add your Streamlit Community Cloud URL here after deploying (see [Deploying the live demo](#deploying-the-live-demo))_
+
 ## Architecture
 
 ```
@@ -111,6 +113,16 @@ python scripts/run_dashboard.py
 ```
 
 Opens at `http://127.0.0.1:8501`. Make sure the API is running first.
+
+## Deploying the live demo
+
+The dashboard can run standalone — if it can't reach the API at `http://127.0.0.1:8000`, it automatically starts the API in a background thread inside the same process (see `dashboard/app.py`). That means the whole app deploys as a single Streamlit service, no separate backend host needed:
+
+1. Push this repo to GitHub.
+2. Go to [share.streamlit.io](https://share.streamlit.io), sign in with GitHub, and create a new app.
+3. Pick this repo/branch, and set the main file path to `dashboard/app.py`.
+4. Deploy. Streamlit Cloud installs `requirements.txt` and starts `dashboard/app.py`, which loads the model and boots the API automatically on first load.
+5. Copy the resulting `https://*.streamlit.app` URL and use it as the **Live demo** link above (and anywhere else you link to the dashboard, instead of a `localhost` URL, which only ever works on your own machine).
 
 ## API Usage
 

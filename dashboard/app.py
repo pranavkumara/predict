@@ -1,5 +1,14 @@
+import sys
+import threading
+import time
+from pathlib import Path
+
 import streamlit as st
 import requests
+
+# Repo root must be importable so `api.main` / `config.settings` resolve
+# the same way they do when the API runs as its own process.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 
 # --------------------------------------------------
@@ -18,6 +27,60 @@ st.set_page_config(
 # --------------------------------------------------
 
 API_URL = "http://127.0.0.1:8000"
+
+
+def _run_api_server():
+    """Run the FastAPI app in-process (used when no external API is up)."""
+    import uvicorn
+    from api.main import app as api_app
+
+    uvicorn.run(api_app, host="127.0.0.1", port=8000, log_level="warning")
+
+
+def _is_our_api(response: requests.Response) -> bool:
+    """Confirm the response actually came from this project's API.
+
+    A plain "did something answer" check isn't enough — something else
+    could already be bound to the same port — so require the response
+    shape our own `/health` endpoint returns.
+    """
+    if response.status_code != 200:
+        return False
+    try:
+        return "model_loaded" in response.json()
+    except ValueError:
+        return False
+
+
+@st.cache_resource
+def ensure_api_running():
+    """Make sure our FastAPI backend is reachable at API_URL.
+
+    On a single-service host (e.g. Streamlit Community Cloud) there is no
+    separate process for the API, so start it in a background thread the
+    first time the app loads. Locally, if `run_api.py` is already serving
+    on 8000, this is a no-op.
+    """
+    try:
+        if _is_our_api(requests.get(f"{API_URL}/health", timeout=1)):
+            return True
+    except requests.exceptions.ConnectionError:
+        pass
+
+    threading.Thread(target=_run_api_server, daemon=True).start()
+
+    for _ in range(30):
+        time.sleep(0.5)
+        try:
+            if _is_our_api(requests.get(f"{API_URL}/health", timeout=1)):
+                return True
+        except requests.exceptions.ConnectionError:
+            continue
+
+    return False
+
+
+ensure_api_running()
 
 
 # --------------------------------------------------
