@@ -2,7 +2,22 @@
 
 AI-powered machine failure prediction system using **XGBoost**. Predicts whether industrial machines are likely to fail based on sensor readings (temperature, rotational speed, torque, tool wear) and provides risk-level classifications with maintenance recommendations.
 
-🔗 **Live demo:** _add your Streamlit Community Cloud URL here after deploying (see [Deploying the live demo](#deploying-the-live-demo))_
+<p align="center">
+  <a href="https://YOUR_STREAMLIT_APP_URL" target="_blank"><strong>▶ Open the live app</strong></a>
+</p>
+
+<!--
+  Not deployed yet: replace YOUR_STREAMLIT_APP_URL above and below with your
+  real https://*.streamlit.app URL once you've followed "Deploying the live
+  demo". Until then this embed will show Streamlit's "app not found" page.
+-->
+<iframe
+  src="https://YOUR_STREAMLIT_APP_URL/?embed=true"
+  height="800"
+  width="100%"
+  style="border:1px solid #ddd;border-radius:8px;"
+  title="Predictive Maintenance System — live demo"
+></iframe>
 
 ## Architecture
 
@@ -122,7 +137,7 @@ The dashboard can run standalone — if it can't reach the API at `http://127.0.
 2. Go to [share.streamlit.io](https://share.streamlit.io), sign in with GitHub, and create a new app.
 3. Pick this repo/branch, and set the main file path to `dashboard/app.py`.
 4. Deploy. Streamlit Cloud installs `requirements.txt` and starts `dashboard/app.py`, which loads the model and boots the API automatically on first load.
-5. Copy the resulting `https://*.streamlit.app` URL and use it as the **Live demo** link above (and anywhere else you link to the dashboard, instead of a `localhost` URL, which only ever works on your own machine).
+5. Copy the resulting `https://*.streamlit.app` URL and replace **every** `YOUR_STREAMLIT_APP_URL` placeholder in this README (the "Open the live app" link and the `<iframe src="...">` near the top) with it — instead of a `localhost` URL, which only ever works on your own machine.
 
 ## API Usage
 
